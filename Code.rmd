@@ -1,0 +1,223 @@
+---
+title: "Railway Accident"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(knitr)
+library(DT)
+library(rpivotTable)
+library(ggplot2)
+library(plotly)
+library(dplyr)
+library(openintro)
+library(highcharter)
+library(ggvis)
+```
+```{r}
+data3 <- read.csv("DoMS_2.5.2.csv")
+```
+```{r}
+mycolors <- c("blue", "#FFC125", "red", "darkorange")
+```
+Interactive Data Visualization
+====================================
+Row
+-------------------------------------
+
+### Railways Accident Analysis
+```{r}
+valueBox(paste("Indian "),
+ color = "danger")
+```
+
+### Total Railway Accidents(2002-2017)
+```{r}
+valueBox(1144,
+ icon = "train")
+```
+
+### **Total Railway Accidents**
+```{r}
+gauge(1144,
+ min = 0,
+ max = 1400,
+ gaugeSectors(success = c(0, 200),
+ warning = c(200,500),
+ danger = c(500,1400),
+ colors = c("green", "yellow", "red")))
+```
+
+### **Total Accidents in winter**
+```{r}
+gauge(390,
+ min = 0,
+ max = 1400,
+ gaugeSectors(success = c(0, 100),
+ warning = c(100,300),
+ danger = c(300,400),
+ colors = c("green", "yellow", "red")))
+```
+
+### **Total Accidents in summer**
+```{r}
+gauge(290,
+ min = 0,
+ max = 1400,
+ gaugeSectors(success = c(0, 100),
+ warning = c(100,300),
+ danger = c(300,400),
+ colors = c("green", "yellow", "red")))
+```
+
+### **Total Accidents in monsoon**
+```{r}
+gauge(270,
+ min = 0,
+ max = 1400,
+ gaugeSectors(success = c(0, 100),
+ warning = c(100,300),
+ danger = c(300,400),
+ colors = c("green", "yellow", "red")))
+```
+
+### **Total Accidents in autumn**
+```{r}
+gauge(180,
+ min = 0,
+ max = 1400,
+ gaugeSectors(success = c(0, 200),
+ warning = c(200,300),
+ danger = c(300,400),
+ colors = c("blue", "yellow", "red")))
+```
+
+Row
+-------------------------------
+### Accidents by Division
+```{r}
+p1 <- plot_ly(x = c("n","nc","s","c","sc","ne","e","sw","ec","wc","nef","eco","k","w","se","nw"),
+ y = c(230,150,120,100,100,80,70,60,60,50,50,40,40,20,20,10),
+ color = "orange",
+ type = 'bar') %>%
+layout(xaxis = list(title = "Railway division"),
+yaxis = list(title = 'Number of Accidents'))
+p1
+```
+
+### Number of Accidents by region
+```{r}
+p2 <- plot_ly(labels = c("North","South","East","Central","west"),
+ values = c(520,280,150,100,90),
+ marker = list(colors = mycolors)) %>%
+ add_pie(hole = 0.2) %>%
+ layout(xaxis = list(zeroline = F,
+ showline = F,
+ showticklabels = F,
+ showgrid = F),
+ yaxis = list(zeroline = F,
+ showline = F,
+ showticklabels=F,
+ showgrid=F))
+p2
+```
+
+### Environment of Accident Spot vs Accident count
+```{r}
+p3 <- plot_ly(x =
+c("open","busy","parallel_tracks","natural","station","water","bad_track","trees","others","loop_l
+ine"),
+ y = c(420,310,170,50,50,40,320,20,10,10),
+ type = "bar") %>%
+ layout(xaxis = list(title="Environment of Accident spot"),
+ yaxis = list(title = "Accident count"))
+p3
+```
+
+Row
+------------------------------------
+### Line Plot of Time vs Accident count
+```{r}
+p4<-plot_ly(x = c("[0,6]","[12,18]","[18,24]","[6,12]"), y = c(480,270,260,150), type = 'scatter', mode
+= 'lines')%>%
+ layout(
+ xaxis = list(title = "Time"),
+ yaxis = list (title = "Accident count"))
+p4
+```
+
+### Pie chart of train types vs accidents
+```{r}
+p5 <- plot_ly(labels = c("Express","Others","Passenger","Freight","Mail"),
+ values = c(750,120,120,100,50),
+ marker = list(colors = mycolors)) %>%
+ add_pie(hole = 0.2) %>%
+ layout(xaxis = list(zeroline = F,
+ showline = F,
+ showticklabels = F,
+ showgrid = F),
+ yaxis = list(zeroline = F,
+ showline = F,
+ showticklabels=F,
+ showgrid=F))
+p5
+```
+
+Major Cause
+========================================
+### cause
+```{r}
+a2 <- plot_ly(labels = c("Human_error","Unknown","Technical","Attack","Natural","Unclear
+_track","Fire"),
+ values = c(330,200,170,150,110,110,80),
+ marker = list(colors = mycolors)) %>%
+ add_pie(hole = 0.2)
+
+a2
+```
+
+Data Table
+========================================
+```{r}
+datatable(data3,
+ caption = "Indian Railway Accidents",
+ rownames = T,
+ filter = "top",
+ options = list(pageLength = 25))
+```
+
+Pivot Table
+=========================================
+```{r}
+rpivotTable(data3,
+ aggregatorName = "Count",
+ cols= "killed",
+ rows = "railway_division",
+ rendererName = "Heatmap")
+```
+
+Summary {data-orientation=columns} 
+===========================================
+Column
+-----------------------------------
+### Total number of people died
+```{r}
+valueBox(17810,
+ icon = "skull-crossbones" )
+```
+
+### Total Number of people injured
+```{r}
+valueBox(49020,
+ icon = "hospital")
+```
+
+### Average Railway Accidents per Year
+```{r}
+valueBox(80,
+ icon = "fa-area-chart")
+```
